@@ -38,31 +38,3 @@ class PostgresConnection:
         if self.conn:
             self.conn.close()
             print("Connection closed.")
-
-# Example usage
-if __name__ == "__main__":
-    db = PostgresConnection()
-    db.connect()
-
-    # Fetch data from xdr_data table
-    query = "SELECT * FROM xdr_data;"
-    df = db.fetch_data(query)
-    
-    if df is not None:
-        print("Column Names:", df.columns)  # Print column names
-        print(df.head())  # Display the first 5 rows
-
-        # Use actual column names from df.columns
-        user_agg = df.groupby('MSISDN/Number').agg(
-            num_sessions=('actual_bearer_id_column', 'count'),  # Update with correct column names
-            total_duration=('actual_session_duration_column', 'sum'),
-            total_dl=('actual_total_dl_bytes_column', 'sum'),
-            total_ul=('actual_total_ul_bytes_column', 'sum')
-        ).reset_index()
-
-        print(user_agg)
-        top_handsets = df['handset'].value_counts().head(10)
-
-
-
-    db.close()
