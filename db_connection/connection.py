@@ -21,7 +21,7 @@ class PostgresConnection:
             )
             print("Connected to PostgreSQL Database!")
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Error connecting to database: {e}")
 
     def fetch_data(self, query):
         try:
@@ -45,24 +45,34 @@ if __name__ == "__main__":
     db.connect()
 
     # Fetch data from xdr_data table
-    query = "SELECT * FROM xdr_data;"
+    query = "SELECT * FROM xdr_data LIMIT 100;"  # Add LIMIT to test query size
     df = db.fetch_data(query)
     
     if df is not None:
-        print("Column Names:", df.columns)  # Print column names
+        print("Column Names:", df.columns)  # Print column names to verify correctness
         print(df.head())  # Display the first 5 rows
 
-        # Use actual column names from df.columns
-        user_agg = df.groupby('MSISDN/Number').agg(
-            num_sessions=('actual_bearer_id_column', 'count'),  # Update with correct column names
-            total_duration=('actual_session_duration_column', 'sum'),
-            total_dl=('actual_total_dl_bytes_column', 'sum'),
-            total_ul=('actual_total_ul_bytes_column', 'sum')
-        ).reset_index()
+        # Update the actual column names as per the printed column names
+        try:
+            user_agg = df.groupby('MSISDN/Number').agg(
+                num_sessions=('actual_bearer_id_column', 'count'),  # Replace with correct column name
+                total_duration=('actual_session_duration_column', 'sum'),  # Replace with correct column name
+                total_dl=('actual_total_dl_bytes_column', 'sum'),  # Replace with correct column name
+                total_ul=('actual_total_ul_bytes_column', 'sum')  # Replace with correct column name
+            ).reset_index()
 
-        print(user_agg)
-        top_handsets = df['handset'].value_counts().head(10)
+            print(user_agg)
+        except KeyError as e:
+            print(f"Error in aggregation: Column {e} not found in the DataFrame.")
 
+        # Fetch and print top 10 handsets (verify if 'handset' is a valid column name)
+        try:
+            top_handsets = df['handset'].value_counts().head(10)
+            print("Top 10 Handsets:\n", top_handsets)
+        except KeyError:
+            print("'handset' column not found in the DataFrame.")
 
+    else:
+        print("No data returned from query or query failed.")
 
     db.close()
