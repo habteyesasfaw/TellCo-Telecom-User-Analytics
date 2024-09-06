@@ -1,99 +1,37 @@
+import unittest
 import pandas as pd
 import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-import sys
-import os
-from sklearn.decomposition import PCA
 
-# Add database connection path
-sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '../')))
-from db_connection.connection import PostgresConnection
-
-# Initialize Postgres connection
-db = PostgresConnection()
-
-def load_data(query):
-    """
-    Load data from PostgreSQL database.
-    """
-    conn = db.connect()
-    data = pd.read_sql(query, conn)
-    conn.close()
-    return data
-
+# Updated handle_missing_values function
 def handle_missing_values(df):
-    """
-    Handle missing values by replacing them with column means.
-    """
-    return df.fillna(df.mean())
+    numeric_columns = df.select_dtypes(include=[np.number]).columns
+    df[numeric_columns] = df[numeric_columns].fillna(df[numeric_columns].mean())
+    return df
 
-def perform_univariate_analysis(df):
-    """
-    Perform univariate analysis by plotting histograms and computing summary statistics.
-    """
-    for column in df.select_dtypes(include=[np.number]).columns:
-        plt.figure(figsize=(8, 6))
-        sns.histplot(df[column], kde=True)
-        plt.title(f'Distribution of {column}')
-        plt.show()
+# Test class
+class TestUserOverviewAnalysis(unittest.TestCase):
 
-        # Summary statistics
-        print(f"Summary statistics for {column}:")
-        print(df[column].describe())
+    def setUp(self):
+        """Set up a sample dataset."""
+        data = {
+            'MSISDN/Number': ['user1', 'user2', 'user3'],
+            'Bearer Id': [5, 10, np.nan],  # One missing value
+            'Dur. (ms)': [1000, 2000, 3000],  # Session duration
+            'Total DL (Bytes)': [100, 200, 300],  # Download data
+            'Total UL (Bytes)': [50, 100, np.nan],  # One missing value in upload
+        }
+        self.df = pd.DataFrame(data)
 
-def perform_pca(df, n_components=2):
-    """
-    Perform Principal Component Analysis (PCA) on the numerical dataset.
-    """
-    pca = PCA(n_components=n_components)
-    numerical_data = df.select_dtypes(include=[np.number])
-    pca_result = pca.fit_transform(numerical_data)
-    
-    explained_variance = pca.explained_variance_ratio_
-    print(f"Explained variance by component: {explained_variance}")
-    
-    return pca_result, explained_variance
+    def test_handle_missing_values(self):
+        """Test if missing values are correctly replaced."""
+        cleaned_df = handle_missing_values(self.df)
 
-def visualize_pca(pca_result, labels):
-    """
-    Visualize the PCA results in a scatter plot.
-    """
-    plt.figure(figsize=(10, 8))
-    plt.scatter(pca_result[:, 0], pca_result[:, 1], c=labels, cmap='viridis')
-    plt.title("PCA Scatter Plot")
-    plt.xlabel("PC1")
-    plt.ylabel("PC2")
-    plt.colorbar()
-    plt.show()
+        # Check if there are no missing values after handling
+        self.assertFalse(cleaned_df.isnull().values.any())
 
-def correlation_matrix(df):
-    """
-    Compute and display the correlation matrix of numerical data.
-    """
-    correlation = df.corr()
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(correlation, annot=True, cmap='coolwarm')
-    plt.title("Correlation Matrix")
-    plt.show()
-    return correlation
+        # Check if missing values were replaced by the correct mean
+        self.assertEqual(cleaned_df.loc[2, 'Bearer Id'], self.df['Bearer Id'].mean())
+        self.assertEqual(cleaned_df.loc[2, 'Total UL (Bytes)'], self.df['Total UL (Bytes)'].mean())
 
-# Sample query to load data
-query = "SELECT * FROM telecom_data"  # Replace with your actual query
-data = load_data(query)
-
-# Handle missing values
-data_cleaned = handle_missing_values(data)
-
-# Perform univariate analysis
-perform_univariate_analysis(data_cleaned)
-
-# Perform PCA
-pca_result, explained_variance = perform_pca(data_cleaned)
-
-# Visualize PCA
-labels = data_cleaned['target_column']  # Replace with the actual label column for color coding
-visualize_pca(pca_result, labels)
-
-# Compute correlation matrix
-correlation_matrix(data_cleaned)
+# Run the tests
+unittest.main(argv=[''], verbosity=2, exit=False)
