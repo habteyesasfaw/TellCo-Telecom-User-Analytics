@@ -1,20 +1,26 @@
-name: Python unit tests  # This is the name of the GitHub Actions workflow
- 
-# This section specifies the events that will trigger the workflow
+name: User Engagement Analysis CI
+
 on:
   push:
     branches:
+
       - task-1
   pull_request:
     branches:
       - main
 # This section defines the job that will be executed as part of the workflow
+
+     - task-2
+    paths:
+      - '**.py'
+  pull_request:
+    branches:
+      - main
+
 jobs:
-  build:
-    # This specifies the runner (virtual machine) on which the job will be executed
+  test:
     runs-on: ubuntu-latest
- 
-    # This section defines the steps that will be executed as part of the job
+
     steps:
     - uses: actions/checkout@v3 # Updated to v3 for compatibility with Node.js 16 and 20
     - name: Set up Python # Sets up the Python environment
@@ -33,3 +39,28 @@ jobs:
       run: |
         python -m unittest discover -s tests
  
+
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Python environment
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+     # Set the PYTHONPATH to include the src directory
+      - name: Run unit tests
+        env:
+          PYTHONPATH: src  # Add the src directory to PYTHONPATH
+        run: |
+          python -m unittest discover tests
+
+     
