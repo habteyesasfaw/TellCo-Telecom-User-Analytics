@@ -60,7 +60,7 @@ class TestUserEngagementAnalysis(unittest.TestCase):
             kmeans.fit(normalized_data)
             distortions.append(kmeans.inertia_)
 
-        # Plotting
+        # Plottings
         plt.figure(figsize=(10, 6))
         plt.plot(K, distortions, 'bx-')
         plt.xlabel('Number of clusters')
