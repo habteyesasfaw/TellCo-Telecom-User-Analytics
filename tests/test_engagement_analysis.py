@@ -6,8 +6,11 @@ import sys
 import os
 import matplotlib.pyplot as plt
 
-# Adjust the path to point to the src directory
-sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '../src')))
+
+# Add the src directory to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
+
+# Import the necessary functions from utils
 from utils import aggregate_engagement, normalize_data, kmeans_clustering, plot_elbow_method
 
 class TestUserEngagementAnalysis(unittest.TestCase):

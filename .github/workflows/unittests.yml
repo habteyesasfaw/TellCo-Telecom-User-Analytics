@@ -31,8 +31,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Run unit tests
+     # Set the PYTHONPATH to include the src directory
       - name: Run unit tests
+        env:
+          PYTHONPATH: src  # Add the src directory to PYTHONPATH
         run: |
           python -m unittest discover tests
 
