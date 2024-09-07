@@ -6,3 +6,4 @@ Plotly
 Scikit-learn
 pandas-ta
 psycopg2
+streamlit
