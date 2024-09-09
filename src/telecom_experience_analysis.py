@@ -38,31 +38,39 @@ def aggregate_per_customer(df):
 
 # Get top, bottom, and most frequent values for a column
 def get_top_bottom_frequent(df, column):
-    top_10 = df[column].nlargest(10)
-    bottom_10 = df[column].nsmallest(10)
-    most_frequent = df[column].mode().head(10)
+    top_10 = df[column].nlargest(10).reset_index()
+    bottom_10 = df[column].nsmallest(10).reset_index()
+    most_frequent = df[column].mode().head(10).reset_index()
+    
+    # Convert Series to DataFrame if necessary
+    if isinstance(top_10, pd.Series):
+        top_10 = top_10.to_frame()
+    if isinstance(bottom_10, pd.Series):
+        bottom_10 = bottom_10.to_frame()
+    if isinstance(most_frequent, pd.Series):
+        most_frequent = most_frequent.to_frame()
     
     return top_10, bottom_10, most_frequent
 
 # Plot throughput and TCP retransmission per handset type
 def plot_throughput_distribution(df):
-    plt.figure(figsize=(10, 6))  # Adjust figure size to avoid layout issues
+    plt.figure(figsize=(18, 6))  # Adjust figure size to avoid layout issues
     sns.barplot(x='Handset Type', y='avg_throughput', data=df, palette='Blues', legend=False)  # Use legend=False
     plt.title('Throughput Distribution by Handset Type')
     plt.xlabel('Handset Type')
     plt.ylabel('Average Throughput')
     plt.xticks(rotation=45)  # Rotate x-axis labels if necessary
-    plt.tight_layout(pad=1.5)  # Adjust padding
+    plt.tight_layout(pad=3.5)  # Adjust padding
     plt.show()
 
 def plot_tcp_retransmission(df):
-    plt.figure(figsize=(10, 6))  # Adjust figure size
+    plt.figure(figsize=(18, 6))  # Adjust figure size
     sns.barplot(x='Handset Type', y='avg_tcp_retransmission', data=df, palette='Reds', legend=False)  # Fix palette and hue warning
     plt.title('TCP Retransmission by Handset Type')
     plt.xlabel('Handset Type')
     plt.ylabel('Average TCP Retransmission')
     plt.xticks(rotation=45)  # Rotate x-axis labels if necessary
-    plt.tight_layout(pad=1.5)  # Adjust padding to fit layout
+    plt.tight_layout(pad=3.5)  # Adjust padding to fit layout
     plt.show()
 
 # Perform k-means clustering for user experience segmentation
