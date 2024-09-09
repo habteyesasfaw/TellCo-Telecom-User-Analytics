@@ -3,7 +3,7 @@ name: User Engagement Analysis CI
 on:
   push:
     branches:
-     - task-2
+     - task-3
     paths:
       - '**.py'
   pull_request:
