@@ -7,3 +7,7 @@ Scikit-learn
 pandas-ta
 psycopg2
 streamlit
+pytest
+scikit-learn
+mysql-connector-python
+sqlalchemy
