@@ -4,17 +4,36 @@ from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
-from sqlalchemy import create_engine
 from datetime import datetime
+from db_connection.connection import PostgresConnection
+from sklearn.impute import SimpleImputer
+
+# Load the dataset
+def load_data(query, conn):
+    """Load data from the database using a PostgresConnection."""
+    return conn.fetch_data(query)
 
 # Task 4.1: Calculate Engagement and Experience Scores
 def calculate_scores(user_data):
-    engagement_clusters = KMeans(n_clusters=2).fit(user_data[['engagement_feature_1', 'engagement_feature_2']])
-    experience_clusters = KMeans(n_clusters=2).fit(user_data[['experience_feature_1', 'experience_feature_2']])
+    # Define engagement and experience features
+    engagement_features = ['Avg RTT DL (ms)', 'Avg Bearer TP DL (kbps)']
+    experience_features = ['Avg RTT UL (ms)', 'Avg Bearer TP UL (kbps)']
 
-    user_data['engagement_score'] = user_data[['engagement_feature_1', 'engagement_feature_2']].apply(
+    # Impute missing values
+    imputer = SimpleImputer(strategy='mean')
+    user_data[engagement_features] = imputer.fit_transform(user_data[engagement_features])
+    user_data[experience_features] = imputer.fit_transform(user_data[experience_features])
+    
+    # Fit KMeans clustering on engagement and experience features
+    engagement_clusters = KMeans(n_clusters=2).fit(user_data[engagement_features])
+    experience_clusters = KMeans(n_clusters=2).fit(user_data[experience_features])
+
+    # Calculate engagement scores
+    user_data['engagement_score'] = user_data[engagement_features].apply(
         lambda row: euclidean(row, engagement_clusters.cluster_centers_[0]), axis=1)
-    user_data['experience_score'] = user_data[['experience_feature_1', 'experience_feature_2']].apply(
+    
+    # Calculate experience scores
+    user_data['experience_score'] = user_data[experience_features].apply(
         lambda row: euclidean(row, experience_clusters.cluster_centers_[0]), axis=1)
 
     return user_data
