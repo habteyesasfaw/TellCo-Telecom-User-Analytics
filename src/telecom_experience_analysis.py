@@ -54,7 +54,7 @@ def get_top_bottom_frequent(df, column):
 
 # Plot throughput and TCP retransmission per handset type
 def plot_throughput_distribution(df):
-    plt.figure(figsize=(10, 6))  # Adjust figure size to avoid layout issues
+    plt.figure(figsize=(18, 6))  # Adjust figure size to avoid layout issues
     sns.barplot(x='Handset Type', y='avg_throughput', data=df, palette='Blues', legend=False)  # Use legend=False
     plt.title('Throughput Distribution by Handset Type')
     plt.xlabel('Handset Type')
@@ -64,7 +64,7 @@ def plot_throughput_distribution(df):
     plt.show()
 
 def plot_tcp_retransmission(df):
-    plt.figure(figsize=(10, 6))  # Adjust figure size
+    plt.figure(figsize=(18, 6))  # Adjust figure size
     sns.barplot(x='Handset Type', y='avg_tcp_retransmission', data=df, palette='Reds', legend=False)  # Fix palette and hue warning
     plt.title('TCP Retransmission by Handset Type')
     plt.xlabel('Handset Type')
