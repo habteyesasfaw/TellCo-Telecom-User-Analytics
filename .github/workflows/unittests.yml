@@ -1,4 +1,4 @@
-name: User Engagement Analysis CI
+name: Experience Analytics CI
 
 on:
   push:
@@ -31,11 +31,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-     # Set the PYTHONPATH to include the src directory
+      # Run unit tests
       - name: Run unit tests
         env:
           PYTHONPATH: src  # Add the src directory to PYTHONPATH
         run: |
           python -m unittest discover tests
 
-     
+      # Run experience analytics script
+      - name: Run Experience Analytics
+        run: |
+          python src/experience_analytics.py
