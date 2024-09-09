@@ -4,6 +4,9 @@ on:
   push:
     branches:
 
+     - task-3
+
+
       - task-1
   pull_request:
     branches:
@@ -11,6 +14,7 @@ on:
 # This section defines the job that will be executed as part of the workflow
 
      - task-2
+
     paths:
       - '**.py'
   pull_request:
