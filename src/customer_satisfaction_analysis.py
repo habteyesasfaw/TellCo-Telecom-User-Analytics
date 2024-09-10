@@ -5,7 +5,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 from datetime import datetime
-from db_connection.connection import PostgresConnection
 from sklearn.impute import SimpleImputer
 
 # Load the dataset
