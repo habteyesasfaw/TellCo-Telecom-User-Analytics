@@ -1,7 +1,5 @@
-Here’s the revised `README.md` based on your provided template:
-
-```markdown
 # Telecom Data Analysis Project
+
 
 This project analyzes telecom data using Python and various data analysis libraries. It focuses on uncovering insights into user behavior, engagement, and network usage.
 
