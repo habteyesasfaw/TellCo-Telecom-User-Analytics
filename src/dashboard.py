@@ -47,7 +47,7 @@ def init_connection():
 #         st.error(f"Error connecting to PostgreSQL database: {e}")
 #         return None  # Return None if connection fails
 
-# conn = init_connection()
+conn = init_connection()
 
 # Perform query
 @st.cache_data(ttl=600)
