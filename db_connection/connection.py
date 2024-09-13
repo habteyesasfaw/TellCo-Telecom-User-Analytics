@@ -2,7 +2,8 @@ import pandas as pd
 import psycopg2
 
 class PostgresConnection:
-    def __init__(self, dbname='telecom', user='postgres', password='root', host='localhost', port='5432'):
+    def __init__(self, dbname, user, password, host, port):
+        
         self.dbname = dbname
         self.user = user
         self.password = password
