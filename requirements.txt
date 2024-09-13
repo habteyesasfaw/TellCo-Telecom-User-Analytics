@@ -3,6 +3,7 @@ numpy
 matplotlib
 seaborn
 plotly
+distutils
 scikit-learn
 pandas-ta
 psycopg2-binary
@@ -10,4 +11,3 @@ streamlit
 pytest
 mysql-connector-python
 sqlalchemy
-psycopg2
