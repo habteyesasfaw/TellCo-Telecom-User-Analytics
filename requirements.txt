@@ -3,7 +3,7 @@ numpy
 matplotlib
 seaborn
 plotly
-distutils
+setuptools
 scikit-learn
 pandas-ta
 psycopg2-binary
