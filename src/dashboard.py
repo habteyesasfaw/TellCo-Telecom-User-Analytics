@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import psycopg2
 import pandas as pd
@@ -7,19 +8,46 @@ import plotly.express as px
 @st.cache_resource(hash_funcs={psycopg2.extensions.connection: id})
 def init_connection():
     try:
-        # Pass PostgreSQL credentials directly to psycopg2.connect
-        return psycopg2.connect(
-            dbname="telecom",
-            user="postgres",
-            password="root",
-            host="localhost",
-            port="5432"
-        )
+        # Check the environment variable
+        if os.getenv('STREAMLIT_ENV') == 'production':
+            # Production connection details
+            return psycopg2.connect(
+                dbname=st.secrets["dbname"],
+                user=st.secrets["user"],
+                password=st.secrets["password"],
+                host=st.secrets["host"],
+                port=st.secrets["port"]
+            )
+        else:
+            # Non-production or development connection details
+            st.warning("The application is not running in production mode. Using development settings.")
+            # You can use different connection details or mock connection here
+            return psycopg2.connect(
+                dbname="telecom",
+                user="postgres",
+                password="root",
+                host="localhost",
+                port="5432"
+            )
     except Exception as e:
         st.error(f"Error connecting to PostgreSQL database: {e}")
         return None  # Return None if connection fails
 
-conn = init_connection()
+# def init_connection():
+#     try:
+#         # Pass PostgreSQL credentials directly to psycopg2.connect
+#         return psycopg2.connect(
+#             dbname="telecom",
+#             user="postgres",
+#             password="root",
+#             host="localhost",
+#             port="5432"
+#         )
+#     except Exception as e:
+#         st.error(f"Error connecting to PostgreSQL database: {e}")
+#         return None  # Return None if connection fails
+
+# conn = init_connection()
 
 # Perform query
 @st.cache_data(ttl=600)
